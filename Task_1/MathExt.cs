@@ -16,9 +16,9 @@ namespace Task_1
 
             BigInteger result = 1;
 
-            for (int i = 1; i < n; i++)
+            for (int i = 1; i <= n; i++)
             {
-                result = result * i;
+                result *= i;
             }
 
             return result;

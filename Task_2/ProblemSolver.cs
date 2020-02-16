@@ -13,12 +13,32 @@ namespace Task_2
         private bool? _allBatchesIsNotCompleted;
         private IEnumerator<Item> _itemsEnumerator;
 
+        private List<int> _listBatchIdIsCompleted = new List<int>();
+        private List<int> _listBatchIdIsNotCompleted = new List<int>();
+
         public ProblemSolver(ItemDataProvider itemsDataProvider, BatchDataProvider batchesDataProvider)
         {
             _itemsDataProvider = itemsDataProvider;
             _batchesDataProvider = batchesDataProvider;
         }
 
+        private bool CheckIsCompletedBatchById(int batchId)
+        {
+            if (_listBatchIdIsCompleted.Contains(batchId)) return true;
+
+            if (_listBatchIdIsNotCompleted.Contains(batchId)) return false;
+
+            if (_batchesDataProvider.GetById(batchId).IsCompleted)
+            {
+                _listBatchIdIsCompleted.Add(batchId);
+                return true;
+            }
+            else
+            {
+                _listBatchIdIsNotCompleted.Add(batchId);
+                return false;
+            }
+        }
         private void CheckForAllBatchesIsNotCompleted()
         {
             _allBatchesIsNotCompleted = true;
@@ -45,7 +65,7 @@ namespace Task_2
             {
                 if (_itemsEnumerator.MoveNext())
                 {
-                    while (!_batchesDataProvider.GetById(_itemsEnumerator.Current.BatchId).IsCompleted)
+                    while (!CheckIsCompletedBatchById(_itemsEnumerator.Current.BatchId))
                     {
                         if (!_itemsEnumerator.MoveNext())
                         {
@@ -61,7 +81,6 @@ namespace Task_2
                     yield break;
                 }
             }
-
             //throw new NotImplementedException();
         }
     }

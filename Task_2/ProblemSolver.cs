@@ -13,8 +13,8 @@ namespace Task_2
         private bool? _allBatchesIsNotCompleted;
         private IEnumerator<Item> _itemsEnumerator;
 
-        private List<int> _listBatchIdIsCompleted = new List<int>();
-        private List<int> _listBatchIdIsNotCompleted = new List<int>();
+        private List<int> _listBatchIdIsCompleted;
+        private List<int> _listBatchIdIsNotCompleted;
 
         public ProblemSolver(ItemDataProvider itemsDataProvider, BatchDataProvider batchesDataProvider)
         {
@@ -61,6 +61,9 @@ namespace Task_2
 
             if (_itemsEnumerator == null) _itemsEnumerator = _itemsDataProvider.GetAll().GetEnumerator();
 
+            _listBatchIdIsCompleted = new List<int>();
+            _listBatchIdIsNotCompleted = new List<int>();
+
             for (int i = 0; i < limit; i++)
             {
                 if (_itemsEnumerator.MoveNext())
@@ -69,6 +72,7 @@ namespace Task_2
                     {
                         if (!_itemsEnumerator.MoveNext())
                         {
+                            ClearUpResources();
                             _itemsEnumerator.Reset();
                             yield break;
                         }
@@ -77,11 +81,18 @@ namespace Task_2
                 }
                 else
                 {
+                    ClearUpResources();
                     _itemsEnumerator.Reset();
                     yield break;
                 }
             }
             //throw new NotImplementedException();
+        }
+
+        private void ClearUpResources()
+        {
+            _listBatchIdIsCompleted = null;
+            _listBatchIdIsNotCompleted = null;
         }
     }
 }

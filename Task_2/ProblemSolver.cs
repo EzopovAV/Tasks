@@ -18,9 +18,30 @@ namespace Task_2
 
         public IEnumerable<Item> GetItemsForCompletedBatches(int limit)
         {
-			// TODO: add code
+            // TODO: add code
+            
+            var itemsEnumerator = _itemsDataProvider.GetAll().GetEnumerator();
 
-			throw new NotImplementedException();
+            for (int i = 0; i < limit; i++)
+            {
+                if (itemsEnumerator.MoveNext())
+                {
+                    while (!_batchesDataProvider.GetById(itemsEnumerator.Current.BatchId).IsCompleted)
+                    {
+                        if (!itemsEnumerator.MoveNext())
+                        {
+                            yield break;
+                        }
+                    }
+                    yield return itemsEnumerator.Current;
+                }
+                else
+                {
+                    yield break;
+                }
+            }
+
+            //throw new NotImplementedException();
         }
     }
 }

@@ -17,6 +17,13 @@ namespace ConsoleApplication1
                 Console.WriteLine("Id = {0}, Name = {1}, BatchId = {2}", item.Id, item.Name, item.BatchId);
             }
 
+            items = service.GetItemsForCompletedBatches(20);
+
+            Console.WriteLine("Items for completed batches:");
+            foreach (var item in items)
+            {
+                Console.WriteLine("Id = {0}, Name = {1}, BatchId = {2}", item.Id, item.Name, item.BatchId);
+            }
             Console.ReadLine();
         }
     }

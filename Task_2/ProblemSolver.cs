@@ -10,7 +10,8 @@ namespace Task_2
         private readonly ItemDataProvider _itemsDataProvider;
         private readonly BatchDataProvider _batchesDataProvider;
 
-        private bool? allBatchesIsNotCompleted = null;
+        private bool? _allBatchesIsNotCompleted;
+        private IEnumerator<Item> _itemsEnumerator;
 
         public ProblemSolver(ItemDataProvider itemsDataProvider, BatchDataProvider batchesDataProvider)
         {
@@ -20,12 +21,12 @@ namespace Task_2
 
         private void CheckForAllBatchesIsNotCompleted()
         {
-            allBatchesIsNotCompleted = true;
+            _allBatchesIsNotCompleted = true;
             foreach (var batch in _batchesDataProvider.GetAll())
             {
                 if (batch.IsCompleted)
                 {
-                    allBatchesIsNotCompleted = false;
+                    _allBatchesIsNotCompleted = false;
                     break;
                 }
             }
@@ -34,27 +35,29 @@ namespace Task_2
         public IEnumerable<Item> GetItemsForCompletedBatches(int limit)
         {
             // TODO: add code
-            if (allBatchesIsNotCompleted == null) CheckForAllBatchesIsNotCompleted();
+            if (_allBatchesIsNotCompleted == null) CheckForAllBatchesIsNotCompleted();
 
-            if (allBatchesIsNotCompleted == true) yield break;
+            if (_allBatchesIsNotCompleted == true) yield break;
 
-            var itemsEnumerator = _itemsDataProvider.GetAll().GetEnumerator();
+            if (_itemsEnumerator == null) _itemsEnumerator = _itemsDataProvider.GetAll().GetEnumerator();
 
             for (int i = 0; i < limit; i++)
             {
-                if (itemsEnumerator.MoveNext())
+                if (_itemsEnumerator.MoveNext())
                 {
-                    while (!_batchesDataProvider.GetById(itemsEnumerator.Current.BatchId).IsCompleted)
+                    while (!_batchesDataProvider.GetById(_itemsEnumerator.Current.BatchId).IsCompleted)
                     {
-                        if (!itemsEnumerator.MoveNext())
+                        if (!_itemsEnumerator.MoveNext())
                         {
+                            _itemsEnumerator.Reset();
                             yield break;
                         }
                     }
-                    yield return itemsEnumerator.Current;
+                    yield return _itemsEnumerator.Current;
                 }
                 else
                 {
+                    _itemsEnumerator.Reset();
                     yield break;
                 }
             }

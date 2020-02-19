@@ -127,12 +127,12 @@ namespace Task_2.Test
         }
 
         [TestMethod]
-        public void GetItemsForCompletedBatches_limit_lessThan0()
+        public void GetItemsForCompletedBatches_limit_lessThan1()
         {
             int limit = -7;
             ProblemSolver service = new ProblemSolver(new ItemDataProvider(), new BatchDataProvider());
             
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => service.GetItemsForCompletedBatches(limit));
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => service.GetItemsForCompletedBatches(limit).First());
         }
     }
 }

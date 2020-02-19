@@ -54,6 +54,8 @@ namespace Task_2
         public IEnumerable<Item> GetItemsForCompletedBatches(int limit)
         {
             // TODO: add code
+            if (limit < 1) throw new ArgumentOutOfRangeException("limit", "Limit cannot be less than 1");
+
             if (_allBatchesIsNotCompleted == null) CheckForAllBatchesIsNotCompleted();
 
             if (_allBatchesIsNotCompleted == true) yield break;

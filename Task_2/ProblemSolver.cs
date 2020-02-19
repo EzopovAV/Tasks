@@ -7,16 +7,15 @@ namespace Task_2
 {
     public class ProblemSolver
     {
-        private readonly ItemDataProvider _itemsDataProvider;
-        private readonly BatchDataProvider _batchesDataProvider;
+        private readonly IDataProvider<Item, int> _itemsDataProvider;
+        private readonly IDataProvider<Batch, int> _batchesDataProvider;
 
         private bool? _allBatchesIsNotCompleted;
-        private IEnumerator<Item> _itemsEnumerator;
 
         private List<int> _listBatchIdIsCompleted;
         private List<int> _listBatchIdIsNotCompleted;
 
-        public ProblemSolver(ItemDataProvider itemsDataProvider, BatchDataProvider batchesDataProvider)
+        public ProblemSolver(IDataProvider<Item, int> itemsDataProvider, IDataProvider<Batch, int> batchesDataProvider)
         {
             _itemsDataProvider = itemsDataProvider;
             _batchesDataProvider = batchesDataProvider;
@@ -59,7 +58,7 @@ namespace Task_2
 
             if (_allBatchesIsNotCompleted == true) yield break;
 
-            if (_itemsEnumerator == null) _itemsEnumerator = _itemsDataProvider.GetAll().GetEnumerator();
+            var _itemsEnumerator = _itemsDataProvider.GetAll().GetEnumerator();
 
             _listBatchIdIsCompleted = new List<int>();
             _listBatchIdIsNotCompleted = new List<int>();
@@ -73,7 +72,6 @@ namespace Task_2
                         if (!_itemsEnumerator.MoveNext())
                         {
                             ClearUpResources();
-                            _itemsEnumerator.Reset();
                             yield break;
                         }
                     }
@@ -82,7 +80,6 @@ namespace Task_2
                 else
                 {
                     ClearUpResources();
-                    _itemsEnumerator.Reset();
                     yield break;
                 }
             }
@@ -94,5 +91,6 @@ namespace Task_2
             _listBatchIdIsCompleted = null;
             _listBatchIdIsNotCompleted = null;
         }
+
     }
 }

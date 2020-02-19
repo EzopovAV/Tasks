@@ -125,5 +125,14 @@ namespace Task_2.Test
 
             Assert.IsTrue(expectItems.Select(x => x.Id).SequenceEqual(resultItems.Select(x => x.Id)));
         }
+
+        [TestMethod]
+        public void GetItemsForCompletedBatches_limit_lessThan0()
+        {
+            int limit = -7;
+            ProblemSolver service = new ProblemSolver(new ItemDataProvider(), new BatchDataProvider());
+            
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => service.GetItemsForCompletedBatches(limit));
+        }
     }
 }
